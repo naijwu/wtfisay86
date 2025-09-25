@@ -45,7 +45,7 @@ export const INSTRUCTION_REF: Record<
       },
       {
         step: "EXECUTE",
-        lines: ["valE = valA + 0", "Cnd = cond(CC, ifun)"],
+        lines: ["valE = valA + 0"],
       },
       {
         step: "MEMORY",
@@ -53,7 +53,7 @@ export const INSTRUCTION_REF: Record<
       },
       {
         step: "WRITEBACK",
-        lines: ["if (Cnd) R[rB] = valE"],
+        lines: ["R[rB] = valE"],
       },
       {
         step: "PCUPDATE",
