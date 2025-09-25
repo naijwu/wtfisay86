@@ -12,11 +12,15 @@ import {
   highlightedConnections,
 } from "./utils";
 
-const COLORS: Record<"dark" | "regular" | "light" | "highlight", string> = {
+const COLORS: Record<
+  "dark" | "regular" | "light" | "highlight" | "connector",
+  string
+> = {
   dark: "#1E40AF",
   regular: "#3C62DE",
   light: "#93C5FD",
   highlight: "#ffb900",
+  connector: "#CCCCCC",
 };
 
 type NodeProps = {
@@ -106,7 +110,7 @@ const Wire: React.FC<{
     <polyline
       points={finalPts.map((p) => `${p.x},${p.y}`).join(" ")}
       fill="none"
-      stroke={highlighted ? COLORS.highlight : "#6B7280"}
+      stroke={highlighted ? COLORS.highlight : COLORS.connector}
       strokeWidth={1.5}
       markerStart={markerStart}
       markerEnd={markerEnd}
@@ -172,7 +176,7 @@ export function Diagram({ hovered }: { hovered: Instruction | null }) {
             fill={
               highlightedJunctions.includes(n.id) || hoveredNode === n.id
                 ? COLORS.highlight
-                : "#6B7280"
+                : COLORS.connector
             }
           />
         ) : (
