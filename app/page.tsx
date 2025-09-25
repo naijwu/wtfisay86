@@ -32,8 +32,13 @@ export default function Home() {
         <div className="absolute top-[100%] p-2">
           {hovered && (
             <div className="flex flex-col gap-2 items-start">
-              <div className="flex gap-4 items-center font-mono font-bold">
-                {INSTRUCTION_REF[hovered].semantics}
+              <div className="flex gap-4 items-center font-mono ">
+                <div className="font-bold">
+                  {INSTRUCTION_REF[hovered].semantics}
+                </div>
+                <div className="opacity-70">
+                  {INSTRUCTION_REF[hovered].description}
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 {INSTRUCTION_REF[hovered].pipeline.map((stage) => (

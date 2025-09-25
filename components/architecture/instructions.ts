@@ -24,6 +24,7 @@ export const INSTRUCTION_REF: Record<
   Instruction,
   {
     instruction: string;
+    description: string;
     semantics: string;
     pipeline: {
       step: PipelineSteps;
@@ -33,6 +34,8 @@ export const INSTRUCTION_REF: Record<
 > = {
   rrmovq: {
     instruction: "rrmovq %rs, %rd",
+    description:
+      "moves content from one register (%rSOURCE) to another (%rDESTINATION)",
     semantics: "r[rd] <- r[rs]",
     pipeline: [
       {
@@ -63,6 +66,8 @@ export const INSTRUCTION_REF: Record<
   },
   cmovXX: {
     instruction: "cmovXX %rs, %rd",
+    description:
+      "conditionally moves content in one register to another (based on last ALU operation)",
     semantics: "r[rd] <- r[rs] if last ALU XX 0",
     pipeline: [
       {
@@ -93,6 +98,7 @@ export const INSTRUCTION_REF: Record<
   },
   irmovq: {
     instruction: "irmovq $i, %rd",
+    description: "Immediately places a value in a register",
     semantics: "r[rd] <- i",
     pipeline: [
       {
@@ -128,6 +134,8 @@ export const INSTRUCTION_REF: Record<
   },
   rmmovq: {
     instruction: "rmmovq %rs, D(%rd)",
+    description:
+      "moves content in a register to a place in memory accessible by the other register",
     semantics: "m[D + r[rd]] <- r[rs]",
     pipeline: [
       {
@@ -148,6 +156,8 @@ export const INSTRUCTION_REF: Record<
   },
   mrmovq: {
     instruction: "mrmovq D(%rs), %rd",
+    description:
+      "moves content from memory (accessed by source register) to the destination register",
     semantics: "r[rd] <- m[D + r[rs]]",
     pipeline: [
       {
@@ -168,6 +178,8 @@ export const INSTRUCTION_REF: Record<
   },
   OPq: {
     instruction: "OPq %rs, %rd",
+    description:
+      "Performs an arithemtic in the order of %rd <OP> %rs (important for non-commutative operations), then places it in %rd",
     semantics: "r[rd] <- r[rd] OP r[rs]",
     pipeline: [
       {
@@ -186,6 +198,8 @@ export const INSTRUCTION_REF: Record<
   },
   jmp: {
     instruction: "jmp D",
+    description:
+      "sets the program counter to a constant destination address (D)",
     semantics: "goto D",
     pipeline: [
       { step: "FETCH", lines: ["icode:ifun = M1[PC]", "valC = M8[PC + 1]"] },
@@ -198,6 +212,8 @@ export const INSTRUCTION_REF: Record<
   },
   jXX: {
     instruction: "jXX D",
+    description:
+      "does a jump, but conditional based on last ALU operation (you know the drill)",
     semantics: "goto D if last ALU XX 0",
     pipeline: [
       {
@@ -213,6 +229,8 @@ export const INSTRUCTION_REF: Record<
   },
   call: {
     instruction: "call D",
+    description:
+      "adds the next instruction's PC (return address) to the stack, then set the PC to the constant D",
     semantics: "pushq PC; jmp D",
     pipeline: [
       {
@@ -228,6 +246,8 @@ export const INSTRUCTION_REF: Record<
   },
   pushq: {
     instruction: "pushq %rs",
+    description:
+      "decrements (makes 'room' on the stack) stack pointer by 8, then stores the value of %rs on the stack",
     semantics: "m[r[rsp] - 8] <- r[rs]; r[rsp] = r[rsp] - 8",
     pipeline: [
       {
@@ -243,6 +263,8 @@ export const INSTRUCTION_REF: Record<
   },
   ret: {
     instruction: "ret",
+    description:
+      "pops return address from the stack (increment stack pointer by 8), and jump to it",
     semantics: "popq PC",
     pipeline: [
       { step: "FETCH", lines: ["icode:ifun = M1[PC]", "valP = PC + 1"] },
@@ -255,6 +277,8 @@ export const INSTRUCTION_REF: Record<
   },
   popq: {
     instruction: "popq %rd",
+    description:
+      "takes the value on the top of the stack and places it on the register (pops it), then increments stack pointer by 8",
     semantics: "r[rd] <- m[r[rsp]]; r[rsp] = r[rsp] + 8",
     pipeline: [
       {
