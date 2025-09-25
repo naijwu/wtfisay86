@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: brother */
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Diagram } from "@/components/architecture/diagram";
 import {
   INSTRUCTION_MAP,
@@ -11,7 +11,12 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [toggled, setToggled] = useState<Instruction | null>(null);
   const [hovered, setHovered] = useState<Instruction | null>(null);
+
+  const view = useMemo(() => {
+    return hovered ?? toggled ?? null;
+  }, [toggled, hovered]);
 
   return (
     <div className="h-full flex flex-col">
@@ -23,27 +28,38 @@ export default function Home() {
             onMouseLeave={() => setHovered(null)}
             className={cn(
               "p-2 cursor-pointer font-mono",
-              hovered === inst ? "bg-amber-400" : "bg-transparent",
+              view === inst ? "bg-amber-400" : "bg-transparent",
+              view === inst && toggled === inst ? "bg-amber-500" : "",
             )}
+            onClick={() =>
+              setToggled((prev) =>
+                prev === inst ? null : (inst as Instruction),
+              )
+            }
+            onKeyDown={() =>
+              setToggled((prev) =>
+                prev === inst ? null : (inst as Instruction),
+              )
+            }
           >
-            {hovered === inst ? INSTRUCTION_REF[hovered].instruction : inst}
+            {view === inst ? INSTRUCTION_REF[view].instruction : inst}
           </div>
         ))}
         <div className="absolute top-[100%] p-2">
-          {hovered && (
+          {view && (
             <div className="flex flex-col gap-2 items-start">
               <div className="flex gap-4 items-center font-mono ">
                 <div className="font-bold">
-                  {INSTRUCTION_REF[hovered].semantics}
+                  {INSTRUCTION_REF[view].semantics}
                 </div>
                 <div className="opacity-70">
-                  {INSTRUCTION_REF[hovered].description}
+                  {INSTRUCTION_REF[view].description}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                {INSTRUCTION_REF[hovered].pipeline.map((stage) => (
+                {INSTRUCTION_REF[view].pipeline.map((stage) => (
                   <div
-                    key={stage.step + INSTRUCTION_REF[hovered].instruction}
+                    key={stage.step + INSTRUCTION_REF[view].instruction}
                     className="flex gap-3"
                   >
                     <div className="text-right pr-2 whitespace-nowrap w-[100px]">
@@ -68,7 +84,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex-grow flex items-center justify-center">
-        <Diagram hovered={hovered} />
+        <Diagram hovered={view} />
       </div>
     </div>
   );
